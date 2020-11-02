@@ -14,6 +14,7 @@ if sys.platform == "win32":
 setup(name="Robinhood Tool",
       version="0.1",
       description="My GUI application!",
-      options={"build_exe": {"include_files": ['config.py',
-                                               'RS_Helper.py', 'SP500_Tickers.py']}},
+      options={"build_exe": {
+          "include_files": ['config.py', 'RS_Helper.py']
+      }},
       executables=[Executable("application.py", base=base)])

@@ -5,7 +5,6 @@ from datetime import date, datetime
 import os
 
 from config import config
-from SP500_Tickers import SP500_ticker_string_list
 
 dir_path = os.path.dirname((os.path.realpath(__file__)))
 
@@ -215,30 +214,6 @@ class rs_helper:
                 reporting_date[0], reporting_date[1])) + "\n"
 
         return earnings_timeline_string
-
-    def get_SP_earnings_timeline(self, lst=SP500_ticker_string_list):
-        SP_earnings_timeline = {}
-
-        print(
-            "\nThe upcoming earnings release dates for companies within the S&P500 are: \n"
-        )
-
-        for ticker in SP500_ticker_string_list:
-            for period in rs.stocks.get_earnings(ticker):
-                if period["report"]:
-                    earnings_date = datetime.strptime(period["report"]["date"],
-                                                      "%Y-%m-%d").date()
-                if earnings_date > date.today():
-                    SP_earnings_timeline[ticker] = earnings_date
-                    break
-
-        sorted_SP_earnings = sorted(SP_earnings_timeline.items(),
-                                    key=lambda x: x[1])
-
-        for reporting_date in sorted_SP_earnings:
-            print("{0}: {1}".format(reporting_date[0], reporting_date[1]))
-
-        print("\n--")
 
     def export_options_history(self):
         todays_date = str(date.today())
@@ -584,23 +559,3 @@ class rs_helper:
 
             return "\nYour total accumulated profit from using the {0} strategy for {1} is: \n${2}0\n".format(
                 strat.replace("_", " "), ticker, premium_total)
-
-
-# Faiyaad = rs_helper(config, rs)
-# Faiyaad.login()
-# Faiyaad.rs.authentication.logout()
-# print(Faiyaad.get_options_returns_by_ticker('WKHS'))
-# print(Faiyaad.rs.get_watchlist_by_name(
-#     'My First List')['results'][0]['symbol'])
-# print(Faiyaad.get_earnings_timeline())
-# Faiyaad.rs.logout()
-# Faiyaad.export_options_history()
-# # # Faiyaad.find_option_premiums(['AAPL', 'WKHS'], '2020-10-23')
-# Faiyaad.get_options_returns_by_strat()
-# # # Faiyaad.rs.find_options_by_expiration(['AAPL'], '2020-10-23')
-# # # print(type(Faiyaad.export_options_history()))
-# Faiyaad.export_option_ratios('2020-11-06')
-# Faiyaad.print_premium_ratios('2020-11-06')
-# Faiyaad.get_options_returns_by_strat('long_call')
-# print(rs.find_options_by_expiration(
-#     'SNAP', '2020-10-23'))

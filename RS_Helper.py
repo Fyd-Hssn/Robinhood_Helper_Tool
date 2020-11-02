@@ -5,7 +5,6 @@ from datetime import date, datetime
 import os
 
 from config import config
-from SP500_Tickers import SP500_ticker_string_list
 
 dir_path = os.path.dirname((os.path.realpath(__file__)))
 
@@ -215,30 +214,6 @@ class rs_helper:
                 reporting_date[0], reporting_date[1])) + "\n"
 
         return earnings_timeline_string
-
-    def get_SP_earnings_timeline(self, lst=SP500_ticker_string_list):
-        SP_earnings_timeline = {}
-
-        print(
-            "\nThe upcoming earnings release dates for companies within the S&P500 are: \n"
-        )
-
-        for ticker in SP500_ticker_string_list:
-            for period in rs.stocks.get_earnings(ticker):
-                if period["report"]:
-                    earnings_date = datetime.strptime(period["report"]["date"],
-                                                      "%Y-%m-%d").date()
-                if earnings_date > date.today():
-                    SP_earnings_timeline[ticker] = earnings_date
-                    break
-
-        sorted_SP_earnings = sorted(SP_earnings_timeline.items(),
-                                    key=lambda x: x[1])
-
-        for reporting_date in sorted_SP_earnings:
-            print("{0}: {1}".format(reporting_date[0], reporting_date[1]))
-
-        print("\n--")
 
     def export_options_history(self):
         todays_date = str(date.today())
