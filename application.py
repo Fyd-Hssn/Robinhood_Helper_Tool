@@ -2,7 +2,9 @@ from config import config
 import robin_stocks as rs
 from RS_Helper import rs_helper
 from tkinter import *
-import tkinter.messagebox
+import os
+
+dir_path = os.path.dirname((os.path.realpath(__file__)))
 
 
 def main():
@@ -59,7 +61,7 @@ def raise_frame(frame):
 
 
 root = Tk()
-root.iconbitmap("B:\Coding Projects\Robinhood_Helper_Tool\Robinhood_Logo.ico")
+root.iconbitmap(f"{dir_path}\Robinhood_Logo.ico")
 root.title("Robinhood Helper Tool")
 
 main_frame = Frame(root, bg="LightSteelBlue4")
