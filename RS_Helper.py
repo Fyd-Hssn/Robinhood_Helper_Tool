@@ -584,23 +584,3 @@ class rs_helper:
 
             return "\nYour total accumulated profit from using the {0} strategy for {1} is: \n${2}0\n".format(
                 strat.replace("_", " "), ticker, premium_total)
-
-
-# Faiyaad = rs_helper(config, rs)
-# Faiyaad.login()
-# Faiyaad.rs.authentication.logout()
-# print(Faiyaad.get_options_returns_by_ticker('WKHS'))
-# print(Faiyaad.rs.get_watchlist_by_name(
-#     'My First List')['results'][0]['symbol'])
-# print(Faiyaad.get_earnings_timeline())
-# Faiyaad.rs.logout()
-# Faiyaad.export_options_history()
-# # # Faiyaad.find_option_premiums(['AAPL', 'WKHS'], '2020-10-23')
-# Faiyaad.get_options_returns_by_strat()
-# # # Faiyaad.rs.find_options_by_expiration(['AAPL'], '2020-10-23')
-# # # print(type(Faiyaad.export_options_history()))
-# Faiyaad.export_option_ratios('2020-11-06')
-# Faiyaad.print_premium_ratios('2020-11-06')
-# Faiyaad.get_options_returns_by_strat('long_call')
-# print(rs.find_options_by_expiration(
-#     'SNAP', '2020-10-23'))
