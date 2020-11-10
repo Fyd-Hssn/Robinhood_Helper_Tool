@@ -353,7 +353,6 @@ underlying_equity_button = Button(
     fg="white",
     width=20,
 )
-
 underlying_breakeven_equity_button = Button(
     underlying_frame,
     text="Break-Even Equity",
@@ -361,7 +360,6 @@ underlying_breakeven_equity_button = Button(
     bg="SeaGreen3",
     width=20,
 )
-
 underlying_equity_change_button = Button(
     underlying_frame,
     text="Total Equity Return",
@@ -369,7 +367,6 @@ underlying_equity_change_button = Button(
     bg="SeaGreen3",
     width=20,
 )
-
 underlying_ticker_equity_change_button = Button(
     underlying_frame,
     text="Ticker Equity Change",
@@ -379,7 +376,6 @@ underlying_ticker_equity_change_button = Button(
     bg="light sea green",
     width=20,
 )
-
 underlying_ticker_option_return_button = Button(
     underlying_frame,
     text="Ticker Options Return",
@@ -391,10 +387,9 @@ underlying_ticker_option_return_button = Button(
     bg="light sea green",
     width=20,
 )
-
 underlying_combined_return_button = Button(
     underlying_frame,
-    text="Ticker Combined",
+    text="Ticker Combined Return",
     command=lambda: print_combined_ticker_return(
         underlying_combined_return_result,
         underlying_ticker_entry,
@@ -404,7 +399,6 @@ underlying_combined_return_button = Button(
     bg="light sea green",
     width=20,
 )
-
 underlying_back_button = Button(
     underlying_frame,
     text="BACK",
@@ -422,7 +416,6 @@ underlying_options_buffer_label = Label(
     font=("Helvetica", 7, "bold"),
     relief=FLAT,
 )
-
 underlying_options_buffer_label2 = Label(
     underlying_frame,
     text="Ticker Return Statistics",
@@ -431,7 +424,6 @@ underlying_options_buffer_label2 = Label(
     font=("Helvetica", 7, "bold"),
     relief=FLAT,
 )
-
 underlying_ticker_label = Label(
     underlying_frame,
     text="Enter Ticker Symbol",
@@ -440,7 +432,6 @@ underlying_ticker_label = Label(
     font=("Helvetica", 9, "bold"),
     relief=FLAT,
 )
-
 underlying_ticker_strat = Label(
     underlying_frame,
     text="Select Options Strategy",
@@ -449,7 +440,6 @@ underlying_ticker_strat = Label(
     font=("Helvetica", 9, "bold"),
     relief=FLAT,
 )
-
 underlying_options_buffer_label3 = Label(underlying_frame, bg="LightSteelBlue4")
 
 underlying_equity_result = Entry(underlying_frame, width=112)
