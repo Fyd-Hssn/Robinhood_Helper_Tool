@@ -21,9 +21,15 @@ class rs_helper:
                       expiresIn=86400,
                       by_sms=True)
 
+    def get_watchlists(self):
+        watchlists = []
+        for watchlist in self.rs.get_all_watchlists()['results']:
+            watchlists.append(watchlist['display_name'])
+
+        return watchlists
+
     def get_current_stock_price(self, symbol):
-        stock_price = "{:.2f}".format(
-            float(rs.get_quotes(symbol)[0]["last_trade_price"]))
+        stock_price = "{:.2f}".format(float(rs.get_latest_price([symbol])[0]))
         return stock_price
 
     def find_option_premiums(self, symbols, expiration_date=None):
@@ -112,11 +118,10 @@ class rs_helper:
         ratio_data.to_csv(r"Robinhood_Helper_Tool\Options_Ratios.csv",
                           index=False)
 
-    def print_premium_ratios(self, type, expiration_date=None):
-        data = self.export_options_history()
+    def print_premium_ratios(self, type, watchlist, expiration_date=None):
         symbols = [
             dict["symbol"]
-            for dict in rs.account.get_watchlist_by_name("Test")["results"]
+            for dict in rs.account.get_watchlist_by_name(watchlist)["results"]
         ]
 
         premium_ratios = []
@@ -128,8 +133,7 @@ class rs_helper:
             row_count = 0
 
             current_price = self.get_current_stock_price(symbol)
-            current_price_float = float(
-                rs.get_quotes(symbol)[0]["last_trade_price"])
+            current_price_float = float(current_price)
             options = self.rs.find_options_by_expiration(
                 symbol, expirationDate=expiration_date)
 
@@ -187,33 +191,63 @@ class rs_helper:
     def get_holdings(self):
         return self.rs.build_holdings()
 
-    def get_earnings_timeline(self):
+    def get_earnings_timeline(self, watchlist=None):
         earnings_timeline = {}
-        # print('\nThe upcoming earnings dates for your holdings are: \n')
 
-        holdings = []
-        for ticker in rs.account.build_holdings().keys():
-            holdings.append(ticker)
+        if not watchlist:
+            holdings = []
+            for ticker in rs.account.build_holdings().keys():
+                holdings.append(ticker)
 
-        for ticker in holdings:
+            for ticker in holdings:
 
-            for period in rs.stocks.get_earnings(ticker):
-                if period["report"]:
-                    earnings_date = datetime.strptime(period["report"]["date"],
-                                                      "%Y-%m-%d").date()
-                    if earnings_date > date.today():
-                        earnings_timeline[ticker] = earnings_date
-                        break
+                for period in rs.stocks.get_earnings(ticker):
+                    if period["report"]:
+                        earnings_date = datetime.strptime(
+                            period["report"]["date"], "%Y-%m-%d").date()
+                        if earnings_date > date.today():
+                            earnings_timeline[ticker] = earnings_date
+                            break
 
-        sorted_earnings = sorted(earnings_timeline.items(), key=lambda x: x[1])
+            sorted_earnings = sorted(earnings_timeline.items(),
+                                     key=lambda x: x[1])
 
-        earnings_timeline_string = (
-            "The upcoming earnings dates for your holdings are:\n")
-        for reporting_date in sorted_earnings:
-            earnings_timeline_string += ("{0}: {1}".format(
-                reporting_date[0], reporting_date[1])) + "\n"
+            earnings_timeline_string = (
+                "The upcoming earnings dates for your holdings are:\n")
 
-        return earnings_timeline_string
+            for reporting_date in sorted_earnings:
+                earnings_timeline_string += ("{0}: {1}".format(
+                    reporting_date[0], reporting_date[1])) + "\n"
+
+            return earnings_timeline_string
+
+        else:
+            tickers = [
+                dict["symbol"] for dict in rs.account.get_watchlist_by_name(
+                    watchlist)["results"]
+            ]
+
+            for ticker in tickers:
+
+                for period in rs.stocks.get_earnings(ticker):
+                    if period["report"]:
+                        earnings_date = datetime.strptime(
+                            period["report"]["date"], "%Y-%m-%d").date()
+                        if earnings_date > date.today():
+                            earnings_timeline[ticker] = earnings_date
+                            break
+
+            sorted_earnings = sorted(earnings_timeline.items(),
+                                     key=lambda x: x[1])
+
+            earnings_timeline_string = (
+                f"The upcoming earnings dates for companies in {watchlist}:\n")
+
+            for reporting_date in sorted_earnings:
+                earnings_timeline_string += ("{0}: {1}".format(
+                    reporting_date[0], reporting_date[1])) + "\n"
+
+            return earnings_timeline_string
 
     def export_options_history(self):
         todays_date = str(date.today())
@@ -487,7 +521,7 @@ class rs_helper:
             return "\nYour total accumulated profit from premiums for {0} is: \n${1}0".format(
                 ticker, premium_total)
 
-        if strat != None:
+        elif strat != None:
             for row in data.drop(index=index_counter).index:
                 if data.iloc[row]["chain_symbol"] == ticker:
                     if row in index_counter:
@@ -557,5 +591,32 @@ class rs_helper:
                                 data.iloc[row]["price"] *
                                 data.iloc[row]["processed_quantity"] * 100)
 
-            return "\nYour total accumulated profit from using the {0} strategy for {1} is: \n${2}0\n".format(
+            return "Your total accumulated profit from using the {0} strategy for {1} is: ${2}0".format(
                 strat.replace("_", " "), ticker, premium_total)
+
+    def get_port_value(self):
+        profile = self.rs.build_user_profile()
+        if profile['extended_hours_equity']:
+            equity = float(profile['extended_hours_equity'])
+        else:
+            equity = float(profile['equity'])
+
+        equity_string = f'Your total equity is ${"{:.2f}".format(equity)}'
+        return equity_string
+
+    def get_underlying_return(self):
+        holdings = self.get_holdings()
+        total_equity_change = 0
+
+        for symbol in holdings:
+            equity_change = float(holdings[symbol]['equity_change'])
+            total_equity_change += equity_change
+
+        equity_change_string = f'Your total equity return is ${"{:.2f}".format(total_equity_change)}'
+        return equity_change_string
+
+    def equity_change_by_ticker(self, ticker):
+        holdings = self.get_holdings()
+        equity_change = float(holdings[ticker]['equity_change'])
+        equity_change_string = f'Your equity change for {ticker} is ${"{:.2f}".format(equity_change)}'
+        return equity_change_string
