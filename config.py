@@ -1,1 +1,1 @@
-config = {"USERNAME": "username", "PASSWORD": "password"}
+config = {"USERNAME": "Enter your username here", "PASSWORD": "Enter your password here"}

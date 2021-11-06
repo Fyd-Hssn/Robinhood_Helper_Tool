@@ -16,21 +16,29 @@ class rs_helper:
         self.rs = rs
 
     def login(self):
-        self.rs.login(username=self.username, password=self.password, expiresIn=86400, by_sms=True)
+        self.rs.robinhood.authentication.login(
+            username=self.username,
+            password=self.password,
+            expiresIn=86400,
+            by_sms=True,
+            store_session=True,
+        )
 
     def get_watchlists(self):
         watchlists = []
-        for watchlist in self.rs.get_all_watchlists()["results"]:
+        for watchlist in self.rs.robinhood.account.get_all_watchlists()["results"]:
             watchlists.append(watchlist["display_name"])
         return watchlists
 
     def get_current_stock_price(self, symbol):
-        stock_price = "{:.2f}".format(float(rs.get_latest_price([symbol])[0]))
+        stock_price = "{:.2f}".format(float(rs.robinhood.get_latest_price([symbol])[0]))
         return stock_price
 
     def export_premium_ratios(self, expiration_date=None):
         data = self.export_options_history()
-        symbols = [dict["symbol"] for dict in rs.account.get_watchlist_by_name("Test")["results"]]
+        symbols = [
+            dict["symbol"] for dict in rs.robinhood.account.get_watchlist_by_name("Test")["results"]
+        ]
         csv_dict = {}
         symbol_dict = {}
         strike_dict = {}
@@ -38,7 +46,9 @@ class rs_helper:
         row_count = 0
         for symbol in symbols:
             current_price = self.get_current_stock_price(symbol)
-            options = self.rs.find_options_by_expiration(symbol, expirationDate=expiration_date)
+            options = self.rs.robinhood.options.find_options_by_expiration(
+                symbol, expirationDate=expiration_date
+            )
             sorted_options = sorted(
                 [option for option in options if option["type"] == "call"],
                 key=lambda option: float(option["strike_price"]),
@@ -59,7 +69,8 @@ class rs_helper:
 
     def print_premium_ratios(self, type, watchlist, expiration_date=None):
         symbols = [
-            dict["symbol"] for dict in rs.account.get_watchlist_by_name(watchlist)["results"]
+            dict["symbol"]
+            for dict in rs.robinhood.account.get_watchlist_by_name(watchlist)["results"]
         ]
         premium_ratios = []
         for symbol in symbols:
@@ -69,7 +80,9 @@ class rs_helper:
             row_count = 0
             current_price = self.get_current_stock_price(symbol)
             current_price_float = float(current_price)
-            options = self.rs.find_options_by_expiration(symbol, expirationDate=expiration_date)
+            options = self.rs.robinhood.options.find_options_by_expiration(
+                symbol, expirationDate=expiration_date
+            )
             sorted_options = sorted(
                 [option for option in options if option["type"] == type],
                 key=lambda option: float(option["strike_price"]),
@@ -108,16 +121,16 @@ class rs_helper:
         return premium_ratio_string
 
     def get_holdings(self):
-        return self.rs.build_holdings()
+        return self.rs.robinhood.account.build_holdings()
 
     def get_earnings_timeline(self, watchlist=None):
         earnings_timeline = {}
         if not watchlist:
             holdings = []
-            for ticker in rs.account.build_holdings().keys():
+            for ticker in rs.robinhood.account.build_holdings().keys():
                 holdings.append(ticker)
             for ticker in holdings:
-                for period in rs.stocks.get_earnings(ticker):
+                for period in rs.robinhood.stocks.get_earnings(ticker):
                     if period["report"]:
                         earnings_date = datetime.strptime(
                             period["report"]["date"], "%Y-%m-%d"
@@ -134,10 +147,11 @@ class rs_helper:
             return earnings_timeline_string
         else:
             tickers = [
-                dict["symbol"] for dict in rs.account.get_watchlist_by_name(watchlist)["results"]
+                dict["symbol"]
+                for dict in rs.robinhood.account.get_watchlist_by_name(watchlist)["results"]
             ]
             for ticker in tickers:
-                for period in rs.stocks.get_earnings(ticker):
+                for period in rs.robinhood.stocks.get_earnings(ticker):
                     if period["report"]:
                         earnings_date = datetime.strptime(
                             period["report"]["date"], "%Y-%m-%d"
@@ -169,7 +183,7 @@ class rs_helper:
                 path_str = str(path)
                 if path_str[-14:-4] < str(date.today()):
                     path.unlink()
-            rs.export_completed_option_orders(dir_path, filename)
+            rs.robinhood.export_completed_option_orders(dir_path, filename)
         data = pd.read_csv(file_path, header=0)
         return data
 
@@ -335,9 +349,8 @@ class rs_helper:
                     premium_total -= (
                         data.iloc[row]["price"] * data.iloc[row]["processed_quantity"] * 100
                     )
-        return "\nYour total accumulated profit from using the {0} strategy is: \n${1}0\n".format(
-            strat.replace("_", " "), premium_total
-        )
+        strat_revised = strat.replace("_", " ")
+        return f"\nYour total accumulated profit from using the {strat_revised} strategy is: \n${premium_total:.2f}\n"
 
     def get_options_returns_by_ticker(self, ticker, strat=None):
         data = self.export_options_history()
@@ -418,9 +431,8 @@ class rs_helper:
                         )
                 else:
                     continue
-            return "\nYour total accumulated profit from premiums for {0} is: \n${1}0".format(
-                ticker, premium_total
-            )
+            # premium_total = round(premium_total, 1)
+            return f"\nYour total accumulated profit from premiums for {ticker} is: \n${premium_total:.2f}0"
         elif strat != None:
             for row in data.drop(index=index_counter).index:
                 if data.iloc[row]["chain_symbol"] == ticker:
@@ -502,12 +514,11 @@ class rs_helper:
                             premium_total -= (
                                 data.iloc[row]["price"] * data.iloc[row]["processed_quantity"] * 100
                             )
-            return "Your total accumulated profit from using the {0} strategy for {1} is: ${2}0".format(
-                strat.replace("_", " "), ticker, premium_total
-            )
+            strat_revised = strat.replace("_", " ")
+            return f"Your total accumulated profit from using the {strat_revised} strategy for {ticker} is: ${premium_total:.2f}"
 
     def get_port_value(self):
-        profile = self.rs.build_user_profile()
+        profile = self.rs.robinhood.account.build_user_profile()
         if profile["extended_hours_equity"]:
             equity = float(profile["extended_hours_equity"])
         else:
@@ -518,18 +529,31 @@ class rs_helper:
     def get_underlying_return(self):
         holdings = self.get_holdings()
         total_equity_change = 0
-        for symbol in holdings:
-            equity_change = float(holdings[symbol]["equity_change"])
-            total_equity_change += equity_change
-        equity_change_string = (
-            f'Your total equity return is ${"{:.2f}".format(total_equity_change)}'
-        )
+        if not holdings:
+            equity_change_string = f'You have nothing in your holdings so your return is currently ${"{:.2f}".format(total_equity_change)}'
+        else:
+            for symbol in holdings:
+                equity_change = float(holdings[symbol]["equity_change"])
+                total_equity_change += equity_change
+            equity_change_string = (
+                f'Your total equity return is ${"{:.2f}".format(total_equity_change)}'
+            )
         return equity_change_string
 
     def equity_change_by_ticker(self, ticker):
         holdings = self.get_holdings()
-        equity_change = float(holdings[ticker]["equity_change"])
-        equity_change_string = (
-            f'Your equity change for {ticker} is ${"{:.2f}".format(equity_change)}'
-        )
+        if not holdings:
+            equity_change_string = (
+                f"{ticker} is no longer in your holdings. Your equity change is $0.00"
+            )
+        else:
+            equity_change = float(holdings[ticker]["equity_change"])
+            equity_change_string = (
+                f'Your equity change for {ticker} is ${"{:.2f}".format(equity_change)}'
+            )
         return equity_change_string
+
+
+# Use to test that rs.login works
+# foo = rs_helper(config, rs)
+# foo.login()
