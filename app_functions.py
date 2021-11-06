@@ -88,7 +88,7 @@ def print_breakeven_equity(entry):
     entry.delete(0, "end")
     underlying_index_pointer = main().get_underlying_return().index("$") + 1
     port_index_pointer = main().get_port_value().index("$") + 1
-    if float(main().get_underlying_return()[underlying_index_pointer:]) < 0:
+    if float(main().get_underlying_return()[underlying_index_pointer:]) <= 0:
         output = abs(float(main().get_underlying_return()[underlying_index_pointer:])) + float(
             main().get_port_value()[port_index_pointer:]
         )
