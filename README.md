@@ -38,4 +38,5 @@ You are now able to navigate the app and use its features! Make sure that you al
 Note that some features such as the Call/Put Ratios tabs and the Earnings Date Tabs will require you to have watchlists in your Robinhood or current holdings.
 
 ## 3. Screenshots
-
+Inline-style: 
+![Main Page](/Screenshots/"1. main page.png" "Logo Title Text 1")
