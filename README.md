@@ -3,7 +3,6 @@
 ## Table of Contents
 1. Introduction
 2. Setup
-3. Sample Screenshots
 ## 1. Introduction
 Robinhood Helper Tool was initially created to track accumulated returns from options over the lifetime of a Robinhood Brokerage Account. 
 There are additional quality of life features outlined below that are built into the tool to help users concisely see certain data. The underlying functionality of this tool
@@ -36,6 +35,3 @@ Once your credentials are entered, open up ***RH_Tool.py*** in your editor and r
 
 You are now able to navigate the app and use its features! Make sure that you always **Export** your options data under the "Options Return Tracker" tab so that your data can be extracted. This must be done each new day you start up the app, since the exported CSV file is tied to the current date.
 Note that some features such as the Call/Put Ratios tabs and the Earnings Date Tabs will require you to have watchlists in your Robinhood or current holdings.
-
-## 3. Screenshots
-
