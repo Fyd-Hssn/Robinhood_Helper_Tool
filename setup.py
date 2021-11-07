@@ -1,4 +1,3 @@
-# This file was used for the CxFreeze build, but is not currently in use for the final build
 import sys
 from cx_Freeze import setup, Executable
 from datetime import date, datetime
