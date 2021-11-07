@@ -34,4 +34,7 @@ Once your credentials are entered, open up ***RH_Tool.py*** in your editor and r
 **NOTE**: If your Robinhood account has MFA enabled, you will be prompted to enter the MFA code in the terminal of your editor, which will be sent to you through SMS or e-mail.
 
 You are now able to navigate the app and use its features! Make sure that you always **Export** your options data under the "Options Return Tracker" tab so that your data can be extracted. This must be done each new day you start up the app, since the exported CSV file is tied to the current date.
+
 Note that some features such as the Call/Put Ratios tabs and the Earnings Date Tabs will require you to have watchlists in your Robinhood or current holdings.
+
+After the first login, you will be able to simply run the executable (build/exe.win-amd64-3.8/RH_Tool.exe), without needing an editor. If the tool ever stops functioning through the exe file, you may need to repeat the initial setup instructions.
