@@ -5,7 +5,7 @@
 2. Setup
 ## 1. Introduction
 Robinhood Helper Tool was initially created to track accumulated returns from options over the lifetime of a Robinhood Brokerage Account. 
-There are additional quality of life features outlined below that are built into the tool to help users concisely see certain data. The underlying functionality of this tool
+There are additional quality of life features outlined below that are built into the tool to help users concisely see certain data.
 
 ### List of Features
 - ***Options Return Tracker***
