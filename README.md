@@ -1,4 +1,4 @@
-# Robinhood_Helper_Tool
+# Robinhood Helper Tool
 [Github Repository](https://github.com/Fyd-Hssn/Robinhood_Helper_Tool)
 ## Table of Contents
 1. Introduction
